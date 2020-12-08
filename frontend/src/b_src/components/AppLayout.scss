@@ -1,0 +1,45 @@
+.app {
+    display: grid;
+    gap: 1rem;
+    //repeat 은 반복 -> 1fr 씩 3번 반복 -> 3개의 컬럼으로 만듬
+    grid-template-columns: repeat(3, 1fr);
+    //영역 지정(위에서 나눈 3개의 컬럼을 화면 어디에 위치시키는지 지정, 이름은 임의로 지정하며, 각 영역 스타일에서 이름을 같게 지정하면 된다)
+    grid-template-areas:
+        'header header header'
+        'contents contents sidebar'
+        'footer footer footer'
+    ;
+    //background-color: lightskyblue;
+    //border: 3px solid #333;
+    width : 1024px;
+    max-width: 100%;
+    margin: 10px auto;
+    
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        //grid-template-areas 에서 사용할 이름 지정 
+        grid-area: header;
+        
+        .pate-title {
+            
+        }
+        .search {
+            
+        }
+        .topnav {
+            
+        }
+    }
+    .sidebar {
+        grid-area: sidebar;
+    }
+    .contents {
+        grid-area: contents;
+    }
+    .footer {
+        grid-area: footer;
+        justify-self: center;
+    }
+}
