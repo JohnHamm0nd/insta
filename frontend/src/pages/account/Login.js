@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import { Card, Form, Input, Button, notification } from "antd"
-import { useHistory, useLocation} from "react-router-dom"
-import { axiosInstance } from "api"
+import { useHistory } from "react-router-dom"
 import { loginUser } from "../../_actions/user_actions"
 import { useDispatch } from "react-redux"
 import { parseErrorMessages } from "utils/forms"
@@ -32,15 +31,11 @@ const tailFormItemLayout = {
   },
 }
 
-//arrow function
 const Login = () => {
   const dispatch = useDispatch()
   const history = useHistory()
-  const location = useLocation()
   const [fieldErrors, setFieldErrors] = useState({})
 
-  const {from: loginRedirectUrl} = location.state || {from: {pathname: '/'}}
-  
   const onFinish = values => {
     
     const { username, password } = values
@@ -48,14 +43,14 @@ const Login = () => {
     
     const dataToSubmit = { username, password }
     dispatch(loginUser(dataToSubmit)).then(response => {
-      //console.log(response)
-      if (response.payload.status == 200) {
+      if (response.payload.status === 200) {
         notification.open({
         message: "로그인 성공",
         icon: <SmileOutlined style={{ color: "#108ee9" }} />
       })
       window.localStorage.setItem('username', values.username)
       window.localStorage.setItem('jwtToken', response.payload.data.token)
+      window.localStorage.setItem('isAuthenticated', true)
       history.push('/')
       } else if (response.payload.status === 400) {
         notification.open({
@@ -81,7 +76,6 @@ const Login = () => {
       })
   }
   
-  
   return (
     <div className="form">
       <Card title='로그인'>
@@ -89,7 +83,6 @@ const Login = () => {
           style={{ minWidth: '400px' }}
           {...formItemLayout}
           onFinish={onFinish}
-          //   onFinishFailed={onFinishFailed}
           autoComplete={"false"}
         >
           <Form.Item

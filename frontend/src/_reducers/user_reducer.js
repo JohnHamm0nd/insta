@@ -1,6 +1,7 @@
 import {
     LOGIN_USER,
     REGISTER_USER,
+    AUTH_START,
     AUTH_USER,
     LOGOUT_USER,
     FOLLOW_USER,
@@ -8,18 +9,25 @@ import {
     GET_FOLLOW_USER,
     GET_USER_PROFILE
 } from '../_actions/types'
- 
 
 export default function(state={},action){
     switch(action.type){
         case REGISTER_USER:
             return { ...state, signUp: action.payload }
         case LOGIN_USER:
-            return {  ...state, userData: action.payload }
+            if (action.payload.statusText === 'OK') {
+                return { ...state, userData: action.payload, isAuthenticated: true, isLoaded: true }
+            }
+        case AUTH_START:
+            return { ...state, isLoaded: false }
         case AUTH_USER:
-            return { ...state, userData: action.payload }
+            if (action.payload.statusText === 'OK') {
+                return { ...state, userData: action.payload, isAuthenticated: true, isLoaded: true }
+            } else {
+                return {...state, userData: action.payload, isAuthenticated: false, isLoaded: true }
+            }
         case LOGOUT_USER:
-            return { ...state }
+            return { ...state, isAuthenticated: false, jwtToken:null, username: null }
         case FOLLOW_USER:
             let newData = state.followUser.data.concat(action.payload.data)
             action.payload.data = newData
@@ -32,10 +40,6 @@ export default function(state={},action){
             return { ...state, followUser: action.payload }
         case GET_USER_PROFILE:
             return { ...state, userProfile: action.payload }
-        //case ADD_TO_CART:
-            //return {...state, userData: {
-                //...state.userData, cart: action.payload
-            //}}
         default:
             return state
     }

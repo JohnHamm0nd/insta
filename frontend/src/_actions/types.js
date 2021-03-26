@@ -1,5 +1,6 @@
 export const LOGIN_USER = 'login_user'
 export const REGISTER_USER = 'register_user'
+export const AUTH_START = 'auth_start'
 export const AUTH_USER = 'auth_user'
 export const LOGOUT_USER = 'logout_user'
 export const FOLLOW_USER = 'follow_user'
@@ -10,3 +11,13 @@ export const GET_POST = 'get_post'
 export const LOADMORE_POST = 'loadmore_post'
 export const DELETE_POST = 'delete_post'
 export const LIKE_POST = 'like_post'
+
+export const NAV_KEY = "NAV_KEY";
+export const OPEN_ADD_CHAT_POPUP = "OPEN_ADD_CHAT_POPUP";
+export const CLOSE_ADD_CHAT_POPUP = "CLOSE_ADD_CHAT_POPUP";
+export const ADD_MESSAGE = "ADD_MESSAGE";
+export const SET_MESSAGES = "SET_MESSAGES";
+export const PREVIOUS_MESSAGES = "PREVIOUS_MESSAGES";
+export const GET_CHATS_SUCCESS = "GET_CHATS_SUCCESS";
+export const CREATE_OR_CHANGE_CHAT = "CREATE_CHAT";
+export const CHANGE_CHAT = "CHANGE_CHAT";

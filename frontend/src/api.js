@@ -16,7 +16,7 @@ export const useAxios = makeUseAxios({
     //if (config.method === "get") { // GET 요청일 때
       //config.params = {
         //...config.params,
-        //_: new Date().getTime(),  // _ 이름의 dummy querystring를 붙입니다.
+        //_: new Date().getTime(),  // _ 이름의 dummy querystring를 붙임. (서버에서 데이터가 바뀌었는데 같은 쿼리에 대한 캐시응답을 막으려고 하는 듯)
       //};
     //}
     //return config;

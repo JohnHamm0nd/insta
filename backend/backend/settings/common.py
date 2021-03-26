@@ -44,12 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #thrid apps
+    # thrid apps
     'corsheaders',
     'django_pydenticon',
     'rest_framework',
     'imagekit',
-    # 'django-taggit',
     # local apps
     'account',
     'instagram',
@@ -125,6 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# AUTH_USER_MODEL
 AUTH_USER_MODEL = 'account.User'
 
 # Internationalization
@@ -150,7 +150,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
+# REST API 관련 설정
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
@@ -166,6 +166,7 @@ REST_FRAMEWORK = {
     
 }
 
+# 커스텀 JWT_RESPONSE_PAYLOAD_HANDLER 사용
 JWT_AUTH = {
     "JWT_RESPONSE_PAYLOAD_HANDLER": 'account.utils.jwt_response_payload_handler',
     "JWT_SECRET_KEY": SECRET_KEY,  # FIXME: JWT_SECRET_KEY, 장고와 다른 SECRET_KEY 를 쓰는게 더 좋다
