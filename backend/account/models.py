@@ -19,7 +19,7 @@ class User(AbstractUser):
     bio           = models.TextField(blank=True)
     phone_number  = models.CharField(max_length=13, blank=True, validators=[RegexValidator(r"^010-?[1-9]\d{3}-?\d{4}$")])
     gender        = models.CharField(max_length=1, blank=True, choices=GenderChoices.choices)
-    avatar        = ProcessedImageField(blank=True, upload_to="accounts/avatar/%Y/%m/%d", processors = [ResizeToFit(472, 472, False)], format = 'JPEG', ooptions = {'quality': 60})
+    avatar        = ProcessedImageField(blank=True, upload_to="accounts/avatar/%Y/%m/%d", processors = [ResizeToFit(472, 472, False)], format = 'JPEG', options = {'quality': 60})
     follower_set  = models.ManyToManyField("self", blank=True)
     following_set = models.ManyToManyField("self", blank=True)
     
