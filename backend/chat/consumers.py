@@ -15,12 +15,6 @@ class ChatConsumer(WebsocketConsumer):
     # 새로운 메시지 전송시 new_message
     # 이전 메시지 내용을 불러오는 previous_messages
     
-    commands = {
-        'fetch_messages': fetch_messages,
-        'new_message': new_message,
-        'previous_messages': previous_messages
-    }
-    
     def previous_messages(self, data):
         messages = get_previous_messages(data['chatId'], data['messageCount'])
         content  = {'command': 'previous_messages', 'messages': self.messages_to_json(messages)}
@@ -53,6 +47,14 @@ class ChatConsumer(WebsocketConsumer):
         content      = {'command': 'new_message', 'message': self.message_to_json(message)}
         return self.send_chat_message(content)
 
+
+    commands = {
+        'fetch_messages': fetch_messages,
+        'new_message': new_message,
+        'previous_messages': previous_messages
+    }
+    
+    
     def messages_to_json(self, messages):
         result = []
         for message in messages:
@@ -102,3 +104,4 @@ class ChatConsumer(WebsocketConsumer):
     def chat_message(self, event):
         message = event['message']
         self.send(text_data=json.dumps(message))
+
