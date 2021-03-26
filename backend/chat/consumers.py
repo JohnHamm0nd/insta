@@ -11,10 +11,6 @@ User = get_user_model()
 
 class ChatConsumer(WebsocketConsumer):
     
-    # 채팅방 점속시 채팅 내용을 불러오는 fetch_messages(가장 최근 메시지 30개)
-    # 새로운 메시지 전송시 new_message
-    # 이전 메시지 내용을 불러오는 previous_messages
-    
     def previous_messages(self, data):
         messages = get_previous_messages(data['chatId'], data['messageCount'])
         content  = {'command': 'previous_messages', 'messages': self.messages_to_json(messages)}
