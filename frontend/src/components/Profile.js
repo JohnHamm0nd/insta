@@ -1,14 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react'
+import { useHistory } from 'react-router-dom'
+import { useDispatch } from "react-redux"
+import { navKey } from "../_actions/nav_actions"
+import { createOrChangeChat } from  "../_actions/chat_actions"
 import { Avatar, Button, Card, Popover } from 'antd'
 
 export default function Profile({user, profileUserName, followUserList, avatar_url, bio, follow, unFollow}) {
     
-    const [visible, setVisible] = useState(false)
-    
-    const handleVisibleChange = visible => {
-        setVisible(visible)
+    const history = useHistory()
+    const profile = {avatar_url, bio}
+    const dispatch = useDispatch()
+    const handleEditProfile = ({profile}) => {
+        history.push({pathname: `/profile`, state: { profile }})
     }
-  
+    
+    const handleChat = (addUser) => {
+        dispatch(createOrChangeChat(addUser))
+        dispatch(navKey(4))
+    }
+    
+    const content = (
+      <div>
+        <Button type="link" style={{padding:"0px"}} onClick={() => {handleChat(profileUserName)}}>Message 보내기</Button>
+      </div>
+    )
+
     return (
         <div style={{marginBottom: '1rem'}}>
             <Card
@@ -16,19 +32,15 @@ export default function Profile({user, profileUserName, followUserList, avatar_u
                     user === profileUserName ? (<>{profileUserName}</>
                     ) : (
                         <Popover
-                            content="다른 기능"
-                            title="Chat"
-                            trigger="click"
-                            visible={visible}
-                            onVisibleChange={handleVisibleChange}
+                            content={content}
                             overlayStyle={{textAlign:"center"}}
                         >
-                            <a href="#">{profileUserName}</a>
+                            <Button type="link" size="large" style={{padding:"0px"}}>{profileUserName}</Button>
                         </Popover>
                     )
                 }
                 extra={
-                    user === profileUserName ? <></> :
+                    user === profileUserName ? <Button onClick={() => handleEditProfile({profile})}>수정</Button> :
                     followUserList.find(followUser => followUser.username === profileUserName) ? (
                         <Button type='primary' onClick={() => unFollow(profileUserName)}>Unfollow</Button>
                     ) : (

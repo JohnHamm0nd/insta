@@ -27,10 +27,10 @@ class WebSocketService {
     this.socketRef.onerror = e => {
       console.log(e.message);
     };
-    this.socketRef.onclose = () => {
-      console.log("WebSocket closed let's reopen");
-      this.connect();
-    };
+    //~ this.socketRef.onclose = () => {
+      //~ console.log("WebSocket closed let's reopen");
+      //~ this.connect();
+    //~ };
   }
 
   disconnect() {
@@ -38,17 +38,20 @@ class WebSocketService {
   }
 
   socketNewMessage(data) {
-    //console.log(data)
+    //~ console.log(data)
     const parsedData = JSON.parse(data);
     const command = parsedData.command;
     if (Object.keys(this.callbacks).length === 0) {
       return;
     }
     if (command === "messages") {
-      this.callbacks[command](parsedData.messages);
+      this.callbacks[command](parsedData.avatar_url, parsedData.messages);
     }
     if (command === "new_message") {
       this.callbacks[command](parsedData.message);
+    }
+    if (command === "previous_messages") {
+      this.callbacks[command](parsedData.messages);
     }
   }
 
@@ -64,14 +67,24 @@ class WebSocketService {
     this.sendMessage({
       command: "new_message",
       from: message.from,
-      message: message.content,
+      message: message.content.message,
       chatId: message.chatId
     });
   }
-
-  addCallbacks(messagesCallback, newMessageCallback) {
+  
+  previousMessages(chatId, messageCount) {
+    //~ console.log(chatId, messageCount)
+    this.sendMessage({
+      command: "previous_messages",
+      chatId: chatId,
+      messageCount: messageCount
+    });
+  }
+  
+  addCallbacks(messagesCallback, newMessageCallback, previousMessagesCallback) {
     this.callbacks["messages"] = messagesCallback;
     this.callbacks["new_message"] = newMessageCallback;
+    this.callbacks["previous_messages"] = previousMessagesCallback;
   }
 
   sendMessage(data) {

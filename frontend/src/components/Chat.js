@@ -1,29 +1,37 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useDispatch, useSelector } from "react-redux"
-import ChatSidepanel from './ChatSidepanel'
+import { useSelector } from "react-redux"
 import { Input } from 'antd'
 import WebSocketInstance from "../websocket"
+import './Chat.scss'
 
 function Chat() {
-  
-  const Post = useSelector(state => state.post)
+
+  const User = useSelector(state => state.user)
+  const chatID = useSelector(state => state.chat.chatID)
+  const Messages = useSelector(state => state.chat.messages)
+  const avatarUrl = useSelector(state => state.chat.avatar_url)
+  const previousLoad = useSelector(state => state.chat.previousLoad)
   
   const [message, setMessage] = useState({message: ''})
   
+  const [scrollHeight, setScrollHeight] = useState()
+
   const initialiseChat = () => {
-    waitForSocketConnection(() => {
-      WebSocketInstance.fetchMessages(
-        // this.props.username,
-        // this.props.match.params.chatID
-        'username',
-        1
-      );
-    })
-    WebSocketInstance.connect('test')
+    if ( chatID ) {
+      if (WebSocketInstance.socketRef) {
+        WebSocketInstance.disconnect()
+      }
+      waitForSocketConnection(() => {
+        WebSocketInstance.fetchMessages(
+           User.userData.data.user.username,
+           chatID,
+        );
+      })
+      WebSocketInstance.connect(chatID)
+    }
   }
   
-  useEffect(initialiseChat, [])
-
+  useEffect(initialiseChat, [chatID])
   const waitForSocketConnection = (callback) => {
     setTimeout(function() {
       if (WebSocketInstance.state() === 1) {
@@ -36,17 +44,15 @@ function Chat() {
       }
     }, 2000);
   }
-  
   const messageChangeHandler = event => {
     setMessage({ message: event.target.value });
   };
 
   const sendMessageHandler = e => {
-    e.preventDefault();
     const messageObject = {
-      from: 'username',
+      from: User.userData.data.user.username,
       content: message,
-      chatId: 'chatId'
+      chatId: chatID,
     };
     WebSocketInstance.newChatMessage(messageObject)
     setMessage({ message: "" })
@@ -58,16 +64,12 @@ function Chat() {
       (new Date().getTime() - new Date(timestamp).getTime()) / 60000
     );
     if (timeDiff < 1) {
-      // less than one minute ago
-      prefix = "just now...";
+      prefix = "just now";
     } else if (timeDiff < 60 && timeDiff > 1) {
-      // less than sixty minutes ago
       prefix = `${timeDiff} minutes ago`;
     } else if (timeDiff < 24 * 60 && timeDiff > 60) {
-      // less than 24 hours ago
       prefix = `${Math.round(timeDiff / 60)} hours ago`;
     } else if (timeDiff < 31 * 24 * 60 && timeDiff > 24 * 60) {
-      // less than 7 days ago
       prefix = `${Math.round(timeDiff / (60 * 24))} days ago`;
     } else {
       prefix = `${new Date(timestamp)}`;
@@ -76,44 +78,74 @@ function Chat() {
   };
 
   const renderMessages = messages => {
-    const currentUser = 'username'
+    const currentUser = User.userData.data.user.username
     return messages.map((message, i, arr) => (
       <li
         key={message.id}
-        style={{ marginBottom: arr.length - 1 === i ? "300px" : "15px" }}
+        style={{ listStyle:"none", marginBottom: "15px", marginRight: "10px" }}
         className={message.author === currentUser ? "sent" : "replies"}
       >
-        <img
-          src="http://emilcarlsson.se/assets/mikeross.png"
-          alt="profile-pic"
-          style={{width: '100px'}}
-        />
-        <p>
-          {message.caption}
+        {message.author === currentUser ? null :
+          <img
+            src={avatarUrl}
+            alt="profile-pic"
+            style={{width: '42px', borderRadius: '50%', float: 'left', margin: '6px'}}
+          />
+        }
+        {message.author === currentUser ? null : <p style={{marginLeft: '60px', marginBottom: '0px', fontSize: '14px'}}>{message.author}</p>}
+        <div>          
+          {message.content}
           <br />
           <small>{renderTimestamp(message.timestamp)}</small>
-        </p>
+        </div>
       </li>
-    ));
-  };
-  
+    ))
+  }
+
   const messagesEndRef = useRef(null)
   
-  const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  const scrollToBottom = (preScrollHeight) => {
+    if (!previousLoad) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    } else {
+      preMessagesRef.current.scrollTo(0, preMessagesRef.current.scrollHeight - preScrollHeight)
+    }
   };
 
-  useEffect(scrollToBottom, [Post])
+  useEffect(() => {scrollToBottom(scrollHeight)}, [Messages])
+  
+  
+  const preMessagesRef = useRef(null)
+  const infiniteScroll = () => {
+    const scrollTop = preMessagesRef.current.scrollTop
+    const scrollHeight = preMessagesRef.current.scrollHeight
+    if (scrollTop === 0 && scrollHeight > 800) {
+      setScrollHeight(scrollHeight)
+      WebSocketInstance.previousMessages(chatID, preMessagesRef.current.childElementCount-1)
+    }
+  }
+  
+  useEffect(() => {
+      preMessagesRef.current.addEventListener("scroll", infiniteScroll, true)
+      return () => preMessagesRef.current.removeEventListener("scroll", infiniteScroll, true)
+  }, [chatID])
   
   return (
     <div>
-      {Post && renderMessages(Post.postList.results)}
-      <div ref={messagesEndRef} />
-      <Input.Search
+    <div
+      style={{overflow: 'scroll', overflowX:'hidden', height: '800px'}}
+      ref={preMessagesRef}
+    >
+      {Messages && renderMessages(Messages)}
+      <div ref={messagesEndRef}></div>
+      
+    </div>
+    <Input.Search
         value={message.message}
         onChange={messageChangeHandler}
         onSearch={sendMessageHandler}
-        required
+        style={{padding: '10px'}}
+        allowClear
         enterButton="Send"
         id="chat-message-input"
         type="text"

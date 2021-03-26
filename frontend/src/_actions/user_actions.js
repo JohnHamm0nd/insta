@@ -2,6 +2,7 @@ import { axiosInstance } from "../api"
 import {
     LOGIN_USER,
     REGISTER_USER,
+    AUTH_START,
     AUTH_USER,
     LOGOUT_USER,
     FOLLOW_USER,
@@ -9,6 +10,13 @@ import {
     GET_FOLLOW_USER,
     GET_USER_PROFILE,
 } from './types'
+
+
+export const authStart = () => {
+  return {
+    type: AUTH_START,
+  };
+};
 
 export function registerUser(dataToSubmit){
     const request = axiosInstance.post('/account/signup/', dataToSubmit)
@@ -23,8 +31,10 @@ export function registerUser(dataToSubmit){
 }
 
 export function loginUser(dataToSubmit){
+    authStart()
     const request = axiosInstance.post('/account/token/',dataToSubmit)
-                .then(response => response)
+                .then(response => response
+                )
                 .catch(error => error.response)
 
     return {
@@ -33,9 +43,10 @@ export function loginUser(dataToSubmit){
     }
 }
 
-export function auth(){
-    const request = axiosInstance.post('/account/token/verify/', {token:window.localStorage.getItem('jwtToken')})
-    .then(response => response.data)
+export function authUser(){
+    authStart()
+    const request = axiosInstance.post('/account/token/verify/', {token:localStorage.getItem('jwtToken')})
+    .then(response => response)
 
     return {
         type: AUTH_USER,
@@ -44,12 +55,12 @@ export function auth(){
 }
 
 export function logoutUser(){
-    const request = axiosInstance.get('/account/logout/')
-    .then(response => response.data)
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("jwtToken");
+    localStorage.removeItem("username");
 
     return {
         type: LOGOUT_USER,
-        payload: request
     }
 }
 
@@ -89,18 +100,3 @@ export function getUserProfile(apiUrl, headers, params){
         payload: request
     }
 }
-
-//export function addToCart(productId) {
-    ////jwtToken 가져오기
-    ////로컬스토리지에서 가져오거나 리덕스에서 가져오기
-    ////로컬스토리지에서 가져오는 방법 사용
-    //let jwtToken = window.localStorage.getItem('jwtToken')
-    //const headers = {Authorization: `JWT ${jwtToken}`}
-    //const request = axiosInstance.post('/cart', productId, {headers})
-    //.then(response => response.data);
-
-    //return {
-        //type: ADD_TO_CART,
-        //payload: request
-    //}
-//}

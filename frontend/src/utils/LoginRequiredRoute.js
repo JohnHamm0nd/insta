@@ -1,36 +1,35 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
-import { useAppContext } from "store";
 
 export default function LoginRequiredRoute({
   component: Component,
   ...kwargs
 }) {
-  const {
-    store: { isAuthenticated }
-  } = useAppContext();
-
-  if (isAuthenticated) {
-  } else {
+  const renderComponent = () => {
+    return (
+      <Route
+        {...kwargs}
+        render={props => {
+          if (kwargs.isAuthenticated) {
+            return <Component {...props} />
+          } else {
+            return (
+              <Redirect
+                to={{
+                  pathname: "/account/login",
+                  state: { from: props.location }
+                }}
+              />
+            )
+          }
+        }}
+      />
+    )
   }
 
   return (
-    <Route
-      {...kwargs}
-      render={props => {
-        if (isAuthenticated) {
-          return <Component {...props} />;
-        } else {
-          return (
-            <Redirect
-              to={{
-                pathname: "/account/login",
-                state: { from: props.location }
-              }}
-            />
-          );
-        }
-      }}
-    />
-  );
+    <div>
+      {renderComponent()}
+    </div>
+  )
 }
