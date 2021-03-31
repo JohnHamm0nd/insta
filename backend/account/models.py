@@ -1,9 +1,6 @@
-from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.core.mail import send_mail
 from django.core.validators import RegexValidator
 from django.db import models
-from django.template.loader import render_to_string
 from django.shortcuts import resolve_url
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
@@ -33,16 +30,6 @@ class User(AbstractUser):
             return self.avatar.url
         else:
             return resolve_url("pydenticon_image", self.username)
-
-    def send_welcome_email(self):
-        subject = render_to_string(
-            "accounts/welcome_email_subject.txt", {"user": self,}
-        )
-        content = render_to_string(
-            "accounts/welcome_email_content.txt", {"user": self,}
-        )
-        sender_email = settings.WELCOME_EMAIL_SENDER
-        send_mail(subject, content, sender_email, [self.email], fail_silently=False)
 
     class Meta:
         ordering = ["-id"]

@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from django_pydenticon.views import image as pydenticon_image # 프로필 이미지를 설정하지 않았을 때 기본 프로필 이미지 라이브러리
+from django_pydenticon.views import image as pydenticon_image # 프로필 이미지를 설정하지 않았을 때 깃허브같은 기본 프로필 이미지 라이브러리
 
 urlpatterns = [
     path('chat/', include('chat.api.urls')),
