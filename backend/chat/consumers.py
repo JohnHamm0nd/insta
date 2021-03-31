@@ -3,8 +3,9 @@ from django.contrib.auth import get_user_model
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 import json
-from .models import Message, Chat, Contact
+from .models import Message
 from .views import get_avatar_url, get_previous_messages, get_last_30_messages, get_user_contact, get_current_chat
+
 
 User = get_user_model()
 
@@ -47,13 +48,11 @@ class ChatConsumer(WebsocketConsumer):
         content      = {'command': 'new_message', 'message': self.message_to_json(message)}
         return self.send_chat_message(content)
 
-
     commands = {
         'fetch_messages': fetch_messages,
         'new_message': new_message,
         'previous_messages': previous_messages
     }
-    
     
     def messages_to_json(self, messages):
         result = []
@@ -68,7 +67,6 @@ class ChatConsumer(WebsocketConsumer):
             'content': message.content,
             'timestamp': str(message.timestamp)
         }
-
 
     def connect(self):
         self.room_name       = self.scope['url_route']['kwargs']['room_name']

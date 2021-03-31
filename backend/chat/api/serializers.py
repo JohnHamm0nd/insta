@@ -13,13 +13,13 @@ class ChatSerializer(serializers.ModelSerializer):
     participants = ContactSerializer(many=True)
 
     class Meta:
-        model = Chat
-        fields = ('id', 'messages', 'participants')
+        model     = Chat
+        fields    = ('id', 'messages', 'participants')
         read_only = ('id')
 
     def create(self, validated_data):
         participants = validated_data.pop('participants')
-        chat = Chat()
+        chat         = Chat()
         chat.save()
         for username in participants:
             contact = get_user_contact(username)

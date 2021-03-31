@@ -59,7 +59,6 @@ class PostSerializer(serializers.ModelSerializer):
             'like_user_set',
             'created_at'
         ]
-        # FIXME: tag_set, like_user_set 은 읽기만 가능하게
 
 
 class CommentSerializer(serializers.ModelSerializer):

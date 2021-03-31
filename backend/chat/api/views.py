@@ -7,16 +7,15 @@ from rest_framework.generics import (
     DestroyAPIView,
     UpdateAPIView
 )
-from chat.models import Chat, Contact
+from chat.models import Chat
 from chat.views import get_user_contact
 from .serializers import ChatSerializer
 from rest_framework.pagination import PageNumberPagination
 
 
-
 User = get_user_model()
 
-
+# 커스텀 페이지네이션
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 1000
     page_query_param = 'page_size'
@@ -46,16 +45,13 @@ class ChatDetailView(RetrieveAPIView):
 class ChatCreateView(CreateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    # permission_classes = (permissions.IsAuthenticated, )
 
 
 class ChatUpdateView(UpdateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    # permission_classes = (permissions.IsAuthenticated, )
 
 
 class ChatDeleteView(DestroyAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    # permission_classes = (permissions.IsAuthenticated, )
