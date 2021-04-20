@@ -14,7 +14,7 @@ def get_avatar_url(username, chatId):
             user = get_object_or_404(User, username=username)
             return user.avatar_url
 
-# 이전 메시지
+# 이전 메시지 30개
 def get_previous_messages(chatId, messageCount):
     chat = get_object_or_404(Chat, id=chatId)
     return chat.messages.order_by('-timestamp').all()[messageCount:messageCount+30]
@@ -30,6 +30,6 @@ def get_user_contact(username):
     contact, flag = Contact.objects.get_or_create(user=user)
     return contact
 
-# 
+# 채팅찾기(받은 메시지가 데이터베이스(모델)에서 어느 채팅방(id) 메시지인지 찾음)
 def get_current_chat(chatId):
     return get_object_or_404(Chat, id=chatId)
