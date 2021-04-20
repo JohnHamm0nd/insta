@@ -20,7 +20,8 @@ class SignupSerializer(serializers.ModelSerializer):
         model = User
         fields = ['pk', 'username', 'password']
 
-# 유저추천 Serializer
+
+# 유저추천리스트 Serializer
 class SuggestionUserSerializer(serializers.ModelSerializer):
     avatar_url = serializers.SerializerMethodField('avatar_url_field')
 
@@ -37,6 +38,7 @@ class SuggestionUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'name', 'avatar_url']
+
 
 # 유저정보 Serializer
 class UserSerializer(serializers.ModelSerializer):
@@ -55,8 +57,8 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'avatar', 'avatar_url', 'bio']
     
-        # UserSerializer 의 경우 로그인, 인증 시 유저의 데이터를 보낼 때, 유저가 개인정보를 수정시 사용함
-        # 로그인, 인증시에는 데이터를 읽는 것(R, 보내주는 것)이기 때문에 username 데이터가 있어야 함(프론트엔드에서 username 데이터를 사용)
-        # 하지만 개인정보 수정 시에 유저는 username 은 수정할수 없고, 프론트에서 username 데이터를 받지도 않음, 이 필드에 대한 조건을 extra_kwargs 를 사용해 변경
+        # UserSerializer 의 경우 로그인, 토큰인증시 유저의 데이터를 보낼 때, 유저가 개인정보를 수정시 사용함
+        # 로그인, 인증시에는 데이터를 읽는 것(Read)이기 때문에 username 데이터가 있어야 함(프론트엔드에서 username 데이터를 사용)
+        # 하지만 개인정보 수정 시에 유저는 username 은 수정할수 없고, 프론트에서 username 데이터를 사용하지도 않음, 이 필드에 대한 조건을 extra_kwargs 를 사용해 변경
         extra_kwargs = {'username': {'required': False}}
 

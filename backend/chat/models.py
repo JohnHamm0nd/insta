@@ -3,7 +3,7 @@ from django.db import models
 
 User = get_user_model()
 
-
+# Contact 모델
 class Contact(models.Model):
     user    = models.ForeignKey(User, related_name='friends', on_delete=models.CASCADE)
     friends = models.ManyToManyField('self', blank=True)

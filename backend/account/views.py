@@ -8,12 +8,14 @@ from .serializers import SignupSerializer, SuggestionUserSerializer, UserSeriali
 
 
 # APIVEW 클래스 사용
+# 회원가입
 class SignupView(CreateAPIView):
     model              = get_user_model()
     serializer_class   = SignupSerializer
     permission_classes = [AllowAny, ]
 
 
+# 유저추천리스트
 class SuggestionListAPIView(ListAPIView):
     queryset         = get_user_model().objects.all()
     serializer_class = SuggestionUserSerializer
@@ -38,7 +40,9 @@ class SuggestionListAPIView(ListAPIView):
         context['request'] = self.request
         return context
 
+
 # 함수형 뷰 사용, api_view 데코레이터 사용
+# 팔로우
 @api_view(['POST'])
 def user_follow(request):
     username    = request.data['profileUserName']
@@ -49,6 +53,7 @@ def user_follow(request):
     
     return Response(serializer.data)
 
+# 언팔로우
 @api_view(['POST'])
 def user_unfollow(request):
     username    = request.data['profileUserName']
@@ -57,6 +62,7 @@ def user_unfollow(request):
     follow_user.follower_set.remove(request.user)
     return Response(status.HTTP_204_NO_CONTENT)
 
+# 팔로우유저 리스트
 @api_view(['GET'])
 def following_user(request):
     serializer = SuggestionUserSerializer(request.user.following_set.all(), many=True, context={"request": request})

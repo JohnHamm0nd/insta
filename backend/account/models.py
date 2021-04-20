@@ -5,7 +5,7 @@ from django.shortcuts import resolve_url
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
 
-
+# 유저모델
 class User(AbstractUser):
     
     class GenderChoices(models.TextChoices):
